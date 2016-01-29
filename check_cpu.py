@@ -36,7 +36,7 @@ def read_proc():
 
         values = regex.search(usage_line)
 
-        stats_dict = dict((k,float(v)) for k,v in values.groupdict().iteritems())
+        stats_dict = dict((k, float(v)) for k, v in values.groupdict().iteritems())
 
         stats_dict['cpu_inuse'] = stats_dict['cpu_user'] \
             + stats_dict['cpu_nice'] + stats_dict['cpu_sys'] \
@@ -55,7 +55,7 @@ def read_proc():
 def diff_checks(first, second):
     diff = deepcopy(second)
 
-    for k,v in first.iteritems():
+    for k, v in first.iteritems():
         diff[k] -= v
 
     return diff
@@ -70,9 +70,9 @@ def calc_percentage(diff):
     return usage
 
 
-def check_cpu():
+def check_cpu(interval):
     first_check = read_proc()
-    sleep(5)
+    sleep(interval)
     second_check = read_proc()
 
     diff = diff_checks(first_check, second_check)
@@ -94,15 +94,18 @@ def main():
     parser = argparse.ArgumentParser(description='Icinga plugin to check the amount of used CPU on Linux using /proc/stat file.')
 
     parser.add_argument('-w', action='store', dest='warning_threshold', type=int, default=80,
-        help='warning threshold. Returns warning if percentage of CPU usage is greater than this value. Default is 80.')
+        help='Warning threshold. Returns warning if percentage of CPU usage is greater than this value. Default is 80.')
     parser.add_argument('-c', action='store', dest='critical_threshold', type=int, default=90,
-        help='critical threshold. Returns critical if percentage of CPU usage is greater than this value. Default is 90.')
-    parser.add_argument('--version', action='version', version='%(prog)s 0.1')
+        help='Critical threshold. Returns critical if percentage of CPU usage is greater than this value. Default is 90.')
+    parser.add_argument('-i', action='store', dest='interval', type=int, default=5,
+        help='Time delay in seconds between CPU info collects. Default is 5.')
+    parser.add_argument('--version', action='version', version='%(prog)s 0.2')
 
     arguments = parser.parse_args()
 
     warning = arguments.warning_threshold
     critical = arguments.critical_threshold
+    interval = arguments.interval
 
     if warning > critical:
         print 'ERROR: warning threshold greater than critical threshold.'
@@ -112,7 +115,7 @@ def main():
         print 'ERROR: warning and critical threshold are equal.'
         exit(UNKNOWN)
 
-    cpu_usage = check_cpu()
+    cpu_usage = check_cpu(interval)
 
     if cpu_usage['cpu_inuse'] <= warning:
         print 'CPU %s %.2f%% | %s' % ('OK', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
