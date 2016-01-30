@@ -3,6 +3,9 @@
 """
 Icinga plugin to check the amount of used memory on Linux using /proc/meminfo file.
 
+Some documentation used while coding this script:
+- https://access.redhat.com/solutions/406773
+
 Author: Vinicius Figueiredo <viniciusfs@gmail.com>
 """
 
