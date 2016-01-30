@@ -118,15 +118,15 @@ def main():
     cpu_usage = check_cpu(interval)
 
     if cpu_usage['cpu_inuse'] <= warning:
-        print 'CPU %s %.2f%% | %s' % ('OK', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+        print 'CPU %s %.2f%% in use | %s' % ('OK', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
         exit(OK)
 
     if cpu_usage['cpu_inuse'] > warning and cpu_usage['cpu_inuse'] < critical:
-        print 'CPU %s %.2f%% | %s' % ('WARNING', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+        print 'CPU %s %.2f%% in use | %s' % ('WARNING', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
         exit(WARNING)
 
     if cpu_usage['cpu_inuse'] >= critical:
-        print 'CPU %s %.2f%% | %s' % ('CRITICAL', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+        print 'CPU %s %.2f%% in use | %s' % ('CRITICAL', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
         exit(CRITICAL)
 
 
