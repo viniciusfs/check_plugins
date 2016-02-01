@@ -124,7 +124,7 @@ def main():
         help='Critical threshold. Returns critical if percentage of CPU usage is greater than this value. Default is 90.')
     parser.add_argument('-i', '--interval', action='store', dest='interval', type=int, default=5,
         help='Time delay in seconds between CPU info collects. Default is 5.')
-    parser.add_argument('-n', '--no-alertl', action='store_true', dest='noalert',
+    parser.add_argument('-n', '--no-alert', action='store_true', dest='noalert',
         help='No alert, only check CPU and print performance data.')
     parser.add_argument('--version', action='version', version='%(prog)s 0.2.1')
 

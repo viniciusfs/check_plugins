@@ -91,7 +91,7 @@ def main():
         help='Critical threshold. Returns critical if percentage of swap usage is greater than this value. Default is 90.')
     parser.add_argument('-n', '--no-alert', action='store_true', dest='noalert',
         help='No alert, only check swap and print performance data.')
-    parser.add_argument('--version', action='version', version='%(prog)s 0.1')
+    parser.add_argument('--version', action='version', version='%(prog)s 0.1.1')
 
     arguments = parser.parse_args()
 
