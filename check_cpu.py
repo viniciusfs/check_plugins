@@ -1,15 +1,27 @@
 #!/usr/bin/env python
 
 """
-Icinga plugin to check the amount of used CPU on Linux using /proc/stat file.
+Icinga plugin to check CPU utilization on Linux systems. This is a pure Python
+plugin, works with Python 2.6.x (requires argparse) and Python 2.7.x. Tested
+on CentOS 7, CentOS 6 and Ubuntu 15.
 
-Some documentation about CPU usage calculation used while coding this script:
-- http://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
-- https://www.kernel.org/doc/Documentation/filesystems/proc.txt
+It reads /proc/stat file two times in a configurable interval, then calculates
+CPU usage in percentage, generates an alert if total cpu usage (user + sys +
+nice + steal + softirq + iowait + irq) is greater than your thresholds.
 
+Example:
+    $ ./check_cpu.py
+    CPU OK 0.85% in use | 'iowait'=0.25 'total'=100.00 'idle'=99.15 'user'=0.30 'softirq'=0.00 'steal'=0.00 'sys'=0.30 'irq'=0.00 'nice'=0.00 'inuse'=0.85
+
+Project Page: http://www.ultrav.com.br/projetos/check-plugins/
 Author: Vinicius Figueiredo <viniciusfs@gmail.com>
-"""
+Version: 0.2.1
 
+Change log:
+  - 0.2.1 - Jan 31 2016 - Small fixes and cosmetic changes.
+  - 0.2   - Jan 30 2016 - Added interval as command line argument.
+  - 0.1   - Jan 28 2016 - First usable version.
+"""
 
 
 import re
@@ -26,30 +38,37 @@ WARNING = 1
 CRITICAL = 2
 UNKNOWN = 3
 
-regex = re.compile(r'cpu  (?P<cpu_user>\d+)\s(?P<cpu_nice>\d+)\s(?P<cpu_sys>\d+)\s(?P<cpu_idle>\d+)\s(?P<cpu_iowait>\d+)\s(?P<cpu_irq>\d+)\s(?P<cpu_softirq>\d+)\s(?P<cpu_steal>\d+)')
 
 
-def read_proc():
+def read_procfs():
     try:
         with open('/proc/stat', 'r') as stat_file:
-            usage_line = stat_file.readlines()[0]
+            contents = stat_file.read()
 
-        values = regex.search(usage_line)
-
-        stats_dict = dict((k, float(v)) for k, v in values.groupdict().iteritems())
-
-        stats_dict['cpu_inuse'] = stats_dict['cpu_user'] \
-            + stats_dict['cpu_nice'] + stats_dict['cpu_sys'] \
-            + stats_dict['cpu_irq'] + stats_dict['cpu_softirq'] \
-            + stats_dict['cpu_steal'] + stats_dict['cpu_iowait']
-
-        stats_dict['cpu_total'] = stats_dict['cpu_idle'] + stats_dict['cpu_inuse']
-
-        return stats_dict
+            return contents
 
     except IOError as e:
         print 'ERROR: %s' % e
         exit(UNKNOWN)
+
+
+
+def cpu_status():
+    regex = re.compile(r'cpu  (?P<cpu_user>\d+)\s(?P<cpu_nice>\d+)\s(?P<cpu_sys>\d+)\s(?P<cpu_idle>\d+)\s(?P<cpu_iowait>\d+)\s(?P<cpu_irq>\d+)\s(?P<cpu_softirq>\d+)\s(?P<cpu_steal>\d+)')
+    output = read_procfs()
+    match = regex.search(output.split('\n')[0])
+
+    if match:
+        status = dict((k, float(v)) for k, v in match.groupdict().iteritems())
+        status['cpu_inuse'] = status['cpu_user'] \
+            + status['cpu_nice'] + status['cpu_sys'] \
+            + status['cpu_irq'] + status['cpu_softirq'] \
+            + status['cpu_steal'] + status['cpu_iowait']
+        status['cpu_total'] = status['cpu_idle'] + status['cpu_inuse']
+
+        return status
+    else:
+        return False
 
 
 def diff_checks(first, second):
@@ -71,14 +90,17 @@ def calc_percentage(diff):
 
 
 def check_cpu(interval):
-    first_check = read_proc()
+    first_check = cpu_status()
     sleep(interval)
-    second_check = read_proc()
+    second_check = cpu_status()
 
-    diff = diff_checks(first_check, second_check)
-    cpu_usage = calc_percentage(diff)
+    if first_check and second_check:
+        diff = diff_checks(first_check, second_check)
+        cpu_usage = calc_percentage(diff)
 
-    return cpu_usage
+        return cpu_usage
+    else:
+        return False
 
 
 def print_perfdata(results):
@@ -91,21 +113,27 @@ def print_perfdata(results):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Icinga plugin to check the amount of used CPU on Linux using /proc/stat file.')
+    parser = argparse.ArgumentParser(description="""Icinga plugin to check
+    the amount of used CPU on Linux systems. It will generate an alert if
+    CPU utilization (in percentage) is greater than your thresholds.
+    """)
 
-    parser.add_argument('-w', action='store', dest='warning_threshold', type=int, default=80,
+    parser.add_argument('-w', '--warning', action='store', dest='warning_threshold', type=int, default=80,
         help='Warning threshold. Returns warning if percentage of CPU usage is greater than this value. Default is 80.')
-    parser.add_argument('-c', action='store', dest='critical_threshold', type=int, default=90,
+    parser.add_argument('-c', '--critical', action='store', dest='critical_threshold', type=int, default=90,
         help='Critical threshold. Returns critical if percentage of CPU usage is greater than this value. Default is 90.')
-    parser.add_argument('-i', action='store', dest='interval', type=int, default=5,
+    parser.add_argument('-i', '--interval', action='store', dest='interval', type=int, default=5,
         help='Time delay in seconds between CPU info collects. Default is 5.')
-    parser.add_argument('--version', action='version', version='%(prog)s 0.2')
+    parser.add_argument('-n', '--no-alertl', action='store_true', dest='noalert',
+        help='No alert, only check CPU and print performance data.')
+    parser.add_argument('--version', action='version', version='%(prog)s 0.2.1')
 
     arguments = parser.parse_args()
 
     warning = arguments.warning_threshold
     critical = arguments.critical_threshold
     interval = arguments.interval
+    noalert = arguments.noalert
 
     if warning > critical:
         print 'ERROR: warning threshold greater than critical threshold.'
@@ -117,17 +145,21 @@ def main():
 
     cpu_usage = check_cpu(interval)
 
-    if cpu_usage['cpu_inuse'] <= warning:
-        print 'CPU %s %.2f%% in use | %s' % ('OK', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
-        exit(OK)
+    if cpu_usage:
+        if cpu_usage['cpu_inuse'] <= warning or noalert:
+            print 'CPU %s %.2f%% in use | %s' % ('OK', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+            exit(OK)
 
-    if cpu_usage['cpu_inuse'] > warning and cpu_usage['cpu_inuse'] < critical:
-        print 'CPU %s %.2f%% in use | %s' % ('WARNING', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
-        exit(WARNING)
+        if cpu_usage['cpu_inuse'] > warning and cpu_usage['cpu_inuse'] < critical:
+            print 'CPU %s %.2f%% in use | %s' % ('WARNING', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+            exit(WARNING)
 
-    if cpu_usage['cpu_inuse'] >= critical:
-        print 'CPU %s %.2f%% in use | %s' % ('CRITICAL', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
-        exit(CRITICAL)
+        if cpu_usage['cpu_inuse'] >= critical:
+            print 'CPU %s %.2f%% in use | %s' % ('CRITICAL', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+            exit(CRITICAL)
+    else:
+        print 'ERROR: Fail while reading CPU information.'
+        exit(UNKNOWN)
 
 
 
