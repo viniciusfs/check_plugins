@@ -54,17 +54,17 @@ def read_procfs():
 
 
 def cpu_status():
-    regex = re.compile(r'cpu  (?P<cpu_user>\d+)\s(?P<cpu_nice>\d+)\s(?P<cpu_sys>\d+)\s(?P<cpu_idle>\d+)\s(?P<cpu_iowait>\d+)\s(?P<cpu_irq>\d+)\s(?P<cpu_softirq>\d+)\s(?P<cpu_steal>\d+)')
+    regex = re.compile(r'cpu  (?P<user>\d+)\s(?P<nice>\d+)\s(?P<sys>\d+)\s(?P<idle>\d+)\s(?P<iowait>\d+)\s(?P<irq>\d+)\s(?P<softirq>\d+)\s(?P<steal>\d+)')
     output = read_procfs()
     match = regex.search(output.split('\n')[0])
 
     if match:
         status = dict((k, float(v)) for k, v in match.groupdict().iteritems())
-        status['cpu_inuse'] = status['cpu_user'] \
-            + status['cpu_nice'] + status['cpu_sys'] \
-            + status['cpu_irq'] + status['cpu_softirq'] \
-            + status['cpu_steal'] + status['cpu_iowait']
-        status['cpu_total'] = status['cpu_idle'] + status['cpu_inuse']
+        status['perc_inuse'] = status['user'] \
+            + status['nice'] + status['sys'] \
+            + status['irq'] + status['softirq'] \
+            + status['steal'] + status['iowait']
+        status['total'] = status['idle'] + status['perc_inuse']
 
         return status
     else:
@@ -84,7 +84,7 @@ def calc_percentage(diff):
     usage = {}
 
     for k, v in diff.iteritems():
-        usage[k] = (1000 * v / diff['cpu_total']) / 10
+        usage[k] = (1000 * v / diff['total']) / 10
 
     return usage
 
@@ -107,7 +107,7 @@ def print_perfdata(results):
     output = ''
 
     for k, v in results.iteritems():
-        output += '\'%s\'=%.2f ' % (k.split('_')[1], v)
+        output += '\'%s\'=%.2f ' % (k, v)
 
     return output
 
@@ -146,16 +146,16 @@ def main():
     cpu_usage = check_cpu(interval)
 
     if cpu_usage:
-        if cpu_usage['cpu_inuse'] <= warning or noalert:
-            print 'CPU %s %.2f%% in use | %s' % ('OK', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+        if cpu_usage['perc_inuse'] <= warning or noalert:
+            print 'CPU %s %.2f%% in use | %s' % ('OK', cpu_usage['perc_inuse'], print_perfdata(cpu_usage))
             exit(OK)
 
-        if cpu_usage['cpu_inuse'] > warning and cpu_usage['cpu_inuse'] < critical:
-            print 'CPU %s %.2f%% in use | %s' % ('WARNING', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+        if cpu_usage['perc_inuse'] > warning and cpu_usage['perc_inuse'] < critical:
+            print 'CPU %s %.2f%% in use | %s' % ('WARNING', cpu_usage['perc_inuse'], print_perfdata(cpu_usage))
             exit(WARNING)
 
-        if cpu_usage['cpu_inuse'] >= critical:
-            print 'CPU %s %.2f%% in use | %s' % ('CRITICAL', cpu_usage['cpu_inuse'], print_perfdata(cpu_usage))
+        if cpu_usage['perc_inuse'] >= critical:
+            print 'CPU %s %.2f%% in use | %s' % ('CRITICAL', cpu_usage['perc_inuse'], print_perfdata(cpu_usage))
             exit(CRITICAL)
     else:
         print 'ERROR: Fail while reading CPU information.'
