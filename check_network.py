@@ -49,7 +49,7 @@ def read_procfs():
 
 
 def iface_status(iface):
-    regex = re.compile(r'%s:\s+(?P<rx_bytes>\d+)\s+(?P<rx_packets>\d+)\s+(?P<rx_errs>\d+)\s+(?P<rx_drop>\d+)\s+(?P<rx_fifo>\d+)\s+(?P<rx_frame>\d+)\s+(?P<rx_compressed>\d+)\s+(?P<rx_multicast>\d+)\s+(?P<tx_bytes>\d+)\s+(?P<tx_packets>\d+)\s+(?P<tx_errs>\d+)\s+(?P<tx_drop>\d+)\s+(?P<tx_fifo>\d+)\s+(?P<tx_colls>\d+)\s+(?P<tx_compressed>\d+)' % iface)
+    regex = re.compile(r'%s:(.*?)(?P<rx_bytes>\d+)\s+(?P<rx_packets>\d+)\s+(?P<rx_errs>\d+)\s+(?P<rx_drop>\d+)\s+(?P<rx_fifo>\d+)\s+(?P<rx_frame>\d+)\s+(?P<rx_compressed>\d+)\s+(?P<rx_multicast>\d+)\s+(?P<tx_bytes>\d+)\s+(?P<tx_packets>\d+)\s+(?P<tx_errs>\d+)\s+(?P<tx_drop>\d+)\s+(?P<tx_fifo>\d+)\s+(?P<tx_colls>\d+)\s+(?P<tx_compressed>\d+)' % iface)
     output = read_procfs()
     match = regex.search(output)
 
@@ -61,7 +61,7 @@ def iface_status(iface):
 
 
 def valid_iface(device):
-    regex = re.compile(r'(?P<iface>\w+\d):\s')
+    regex = re.compile(r'(?P<iface>\w+\d):.*?')
     output = read_procfs()
     iface_list = regex.findall(output)
 
