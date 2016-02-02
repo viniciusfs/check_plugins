@@ -104,15 +104,15 @@ def main():
     load_average = check_load()
 
     if load_average['load1'] <= warning or noalert:
-        print 'Load average %s %.2f | %s' % ('OK', load_average['load1'], print_perfdata(load_average))
+        print 'Load average %s %.2f, %.2f, %.2f | %s' % ('OK', load_average['load1'], load_average['load5'], load_average['load15'], print_perfdata(load_average))
         exit(OK)
 
     if load_average['load1'] > warning and load_average['load1'] < critical:
-        print 'Load average %s %.2f | %s' % ('WARNING', load_average['load1'], print_perfdata(load_average))
+        print 'Load average %s %.2f, %.2f, %.2f | %s' % ('WARNING', load_average['load1'], load_average['load5'], load_average['load15'], print_perfdata(load_average))
         exit(WARNING)
 
     if load_average['load1'] >= critical:
-        print 'Load average %s %.2f | %s' % ('CRITICAL', load_average['load1'], print_perfdata(load_average))
+        print 'Load average %s %.2f, %.2f, %.2f | %s' % ('CRITICAL', load_average['load1'], load_average['load5'], load_average['load15'], print_perfdata(load_average))
         exit(CRITICAL)
 
 
