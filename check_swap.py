@@ -14,9 +14,10 @@ Example:
 
 Project Page: http://www.ultrav.com.br/projetos/check-plugins/
 Author: Vinicius Figueiredo <viniciusfs@gmail.com>
-Version: 0.1.1
+Version: 0.1.2
 
 Change log:
+  - 0.1.2 - Feb 15 2016 - Fixed performance data output.
   - 0.1.1 - Jan 31 2016 - Small fixes and cosmetic changes.
   - 0.1   - Jan 30 2016 - First usable version.
 """
@@ -47,7 +48,7 @@ def read_procfs():
 
 
 def swap_status():
-    regex = re.compile(r'SwapTotal:\s+(?P<swap_total>\d+)\skB\nSwapFree:\s+(?P<swap_free>\d+)\skB\n')
+    regex = re.compile(r'SwapTotal:\s+(?P<total>\d+)\skB\nSwapFree:\s+(?P<free>\d+)\skB\n')
     output = read_procfs()
     match = regex.search(output)
 
@@ -62,7 +63,8 @@ def check_swap():
     swap_usage = swap_status()
 
     if swap_usage:
-        swap_usage['perc_inuse'] = 100 - (swap_usage['swap_free'] / swap_usage['swap_total']) * 100
+        swap_usage['perc_inuse'] = 100 - (swap_usage['free'] / swap_usage['total']) * 100
+        swap_usage['used'] = swap_usage['total'] - swap_usage['free']
 
         return swap_usage
     else:
@@ -91,7 +93,7 @@ def main():
         help='Critical threshold. Returns critical if percentage of swap usage is greater than this value. Default is 90.')
     parser.add_argument('-n', '--no-alert', action='store_true', dest='noalert',
         help='No alert, only check swap and print performance data.')
-    parser.add_argument('--version', action='version', version='%(prog)s 0.1.1')
+    parser.add_argument('--version', action='version', version='%(prog)s 0.1.2')
 
     arguments = parser.parse_args()
 
