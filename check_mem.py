@@ -70,6 +70,7 @@ def check_mem():
     mem_usage = memory_status()
 
     if mem_usage:
+        mem_usage['used'] = mem_usage['total'] - (mem_usage['free'] + mem_usage['buffers'] + mem_usage['cached'])
         mem_usage['perc_inuse'] = 100 - ((mem_usage['free'] + mem_usage['buffers'] + mem_usage['cached']) / mem_usage['total']) * 100
 
         return mem_usage
