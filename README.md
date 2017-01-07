@@ -46,7 +46,7 @@ usually to plot nice charts and create monitoring dashboards.
 ### Safe defaults
 
 When possible, the check plugins can be run successfully without any argument,
-thanks to built in safe defaults.
+using built in safe defaults.
 
 
 ## Authors
