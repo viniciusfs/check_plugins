@@ -32,3 +32,7 @@ than your threshold.
                           Mount point to be checked.
     -n, --no-alert        No alert, only check and print performance data.
     --version             show program's version number and exit
+
+## Others
+
+* [The /proc filesystem](https://www.kernel.org/doc/Documentation/filesystems/proc.txt)

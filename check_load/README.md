@@ -2,6 +2,8 @@
 
 ## Description
 
+Check load average on Linux systems.
+
 Reads `/proc/loadavg` file and generate an alert if load1 value is greater
 than your thresholds.
 
@@ -36,3 +38,7 @@ than your thresholds.
 ## FIXME
 
 - [ ] Update all keys in load_average dict when cpucount is true
+
+## Others
+
+* [The /proc filesystem](https://www.kernel.org/doc/Documentation/filesystems/proc.txt)

@@ -1,25 +1,8 @@
 #!/usr/bin/env python
 
 """
-Icinga plugin to check memory utilization on Linux systems. This is a pure Python
-plugin, works with Python 2.6.x (requires argparse) and Python 2.7.x. Tested
-on CentOS 7, CentOS 6 and Ubuntu 15.
-
-It reads /proc/meminfo file to calculate memory utilization in percentage,
-generates an alert if value is greater than your thresholds. Cached and buffers
-are counted as free memory.
-
-Example:
-    $ check_mem.py
-    Memory OK 52.84% in use | 'cached'=1811600.00 'total'=8099232.00 'buffers'=159944.00 'free'=1848268.00 'perc_inuse'=52.84
-
-Project Page: http://www.ultrav.com.br/projetos/check-plugins/
-Author: Vinicius Figueiredo <viniciusfs@gmail.com>
-Version: 0.1.1
-
-Change log:
-  - 0.1.1 - Feb 01 2016 - Small fixes and cosmetic changes.
-  - 0.1   - Jan 30 2016 - First usable version.
+This file is part of ultrav check_plugins project
+http://github.com/viniciusfs/check_plugins
 """
 
 import argparse
@@ -95,7 +78,7 @@ def main():
     parser.add_argument('-c', '--critical', action='store', dest='critical_threshold', type=int, default=90,
         help='Critical threshold. Returns critical if percentage of memory usage is greater than this value. Default is 90.')
     parser.add_argument('-n', '--no-alert', action='store_true', dest='noalert',
-            help='No alert, only check swap and print performance data.')
+            help='No alert, only check memory and print performance data.')
     parser.add_argument('--version', action='version', version='%(prog)s 0.1.1')
 
     arguments = parser.parse_args()
