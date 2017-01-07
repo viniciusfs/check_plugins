@@ -1,4 +1,4 @@
-# viniciusfs check_plugins project
+# ultrav check_plugins
 
 A collection of check plugins for monitoring written in Python.
 
