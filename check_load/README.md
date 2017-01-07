@@ -35,10 +35,6 @@ than your thresholds.
 	--version             show program's version number and exit
 
 
-## FIXME
-
-- [ ] Update all keys in load_average dict when cpucount is true
-
 ## Others
 
 * [The /proc filesystem](https://www.kernel.org/doc/Documentation/filesystems/proc.txt)
