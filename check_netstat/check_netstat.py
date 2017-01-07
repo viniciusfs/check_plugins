@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This file is part of Python check_plugins project
+This file is part of viniciusfs check_plugins project
 http://github.com/viniciusfs/check_plugins
 
 This file has code from:

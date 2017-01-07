@@ -1,4 +1,4 @@
-# Python check_plugins
+# viniciusfs check_plugins project
 
 A collection of check plugins for monitoring written in Python.
 
