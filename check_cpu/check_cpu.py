@@ -11,7 +11,8 @@ nice + steal + softirq + iowait + irq) is greater than your thresholds.
 
 Example:
     $ ./check_cpu.py
-    CPU OK 0.85% in use | 'iowait'=0.25 'total'=100.00 'idle'=99.15 'user'=0.30 'softirq'=0.00 'steal'=0.00 'sys'=0.30 'irq'=0.00 'nice'=0.00 'inuse'=0.85
+    CPU OK 0.85% in use | 'iowait'=0.25 'total'=100.00 'idle'=99.15 'user'=0.30
+    'softirq'=0.00 'steal'=0.00 'sys'=0.30 'irq'=0.00 'nice'=0.00 'inuse'=0.85
 
 Project Page: http://www.ultrav.com.br/projetos/check-plugins/
 Author: Vinicius Figueiredo <viniciusfs@gmail.com>
@@ -39,18 +40,14 @@ CRITICAL = 2
 UNKNOWN = 3
 
 
-
 def read_procfs():
     try:
         with open('/proc/stat', 'r') as stat_file:
             contents = stat_file.read()
-
             return contents
-
     except IOError as e:
         print 'ERROR: %s' % e
         exit(UNKNOWN)
-
 
 
 def cpu_status():

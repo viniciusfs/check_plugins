@@ -1,6 +1,0 @@
-[X] check_cpu.py
-[X] check_disk.py
-[X] check_load.py
-[X] check_mem.py
-[X] check_network.py
-[X] check_swap.py
