@@ -23,8 +23,8 @@ plugins as a programming exercise. To make it a little harder (or not
 ## Specification
 
 The specification for check plugins are mostly the same used for
-[Icinga](http:x/icinga.org), [Nagios](https://nagios.org) and
-[Sensu](h   ttp  //sensuapp.org) plugins.
+[Icinga](https://icinga.org), [Nagios](https://nagios.org) and
+[Sensu](https://sensuapp.org) plugins.
 
 ### Exit code
 
