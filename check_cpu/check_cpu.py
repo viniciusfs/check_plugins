@@ -1,29 +1,9 @@
 #!/usr/bin/env python
 
 """
-Icinga plugin to check CPU utilization on Linux systems. This is a pure Python
-plugin, works with Python 2.6.x (requires argparse) and Python 2.7.x. Tested
-on CentOS 7, CentOS 6 and Ubuntu 15.
-
-It reads /proc/stat file two times in a configurable interval, then calculates
-CPU usage in percentage, generates an alert if total cpu usage (user + sys +
-nice + steal + softirq + iowait + irq) is greater than your thresholds.
-
-Example:
-    $ ./check_cpu.py
-    CPU OK 0.85% in use | 'iowait'=0.25 'total'=100.00 'idle'=99.15 'user'=0.30
-    'softirq'=0.00 'steal'=0.00 'sys'=0.30 'irq'=0.00 'nice'=0.00 'inuse'=0.85
-
-Project Page: http://www.ultrav.com.br/projetos/check-plugins/
-Author: Vinicius Figueiredo <viniciusfs@gmail.com>
-Version: 0.2.1
-
-Change log:
-  - 0.2.1 - Jan 31 2016 - Small fixes and cosmetic changes.
-  - 0.2   - Jan 30 2016 - Added interval as command line argument.
-  - 0.1   - Jan 28 2016 - First usable version.
+This file is part of Python check_plugins project
+http://github.com/viniciusfs/check_plugins
 """
-
 
 import re
 import argparse

@@ -3,7 +3,7 @@
 A collection of check plugins for monitoring written in Python.
 
 
-## Purporse and motivation
+## Purpose and motivation
 
 While deploying a Icinga server I thought was a good idea write my own check
 plugins as a programming exercise. To make it a little harder (or not
