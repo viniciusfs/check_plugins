@@ -1,23 +1,8 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 
 """
-Icinga plugin to check network utilization on Linux systems. This is a pure
-Python plugin, works with Python 2.6.x (requires argparse) and Python 2.7.x.
-Tested on CentOS 7, CentOS 6 and Ubuntu 15.
-
-It reads /proc/net/dev file two times in a configurable interval, then
-calculates network utilization in kB/s and packets per second. Generates an
-alert if values are greater than your thresholds.
-
-Example:
-    $ ./check_network.py
-
-Project Page: http://www.ultrav.com.br/projetos/check-plugins/
-Author: Vinicius Figueiredo <viniciusfs@gmail.com>
-Version: 0.1
-
-Change log:
-  - 0.1   - Jan 31 2016 - First usable version.
+This file is part of ultrav check_plugins project
+http://github.com/viniciusfs/check_plugins
 """
 
 import re
