@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+"""
+This file is part of Python check_plugins project
+http://github.com/viniciusfs/check_plugins
+
+This file has code from:
+http://voorloopnul.com/blog/a-python-netstat-in-less-than-100-lines-of-code
+"""
+
 import pwd
 import os
 import re
