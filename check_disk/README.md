@@ -5,8 +5,9 @@
 Check file system utilization on Linux systems.
 
 Read `/proc/mounts` to get list of valid mount points. Gets information about
-specified mount point using os.statvfs module. Calculates file system
-utilization and generates an alarm if values are greater than your threhsold.
+specified mount point using [os.statvfs module](https://docs.python.org/2/library/statvfs.html#module-statvfs).
+Calculates file system utilization and generates an alarm if values are greater
+than your threshold.
 
 
 ## Usage
