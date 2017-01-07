@@ -1,25 +1,8 @@
 #!/usr/bin/env python
 
 """
-Icinga plugin to check load average on Linux systems. This is a pure Python
-plugin, works with Python 2.6.x (requires argparse) and Python 2.7.x. Tested
-on CentOS 7, CentOS 6 and Ubuntu 15.
-
-It reads /proc/loadavg file and generate an alert if load1 value is greater
-than your thresholds.
-
-Example:
-    $ check_load.py
-    Load average OK 0.25 | 'load1'=0.25 'load15'=0.13 'load5'=0.10
-
-Project Page: http://www.ultrav.com.br/projetos/check-plugins/
-Author: Vinicius Figueiredo <viniciusfs@gmail.com>
-Version: 0.1.2
-
-Change log:
-  - 0.1.2 - Mar 23 2016 - Added CPU count option.
-  - 0.1.1 - Jan 31 2016 - Small fixes and cosmetic changes.
-  - 0.1   - Jan 30 2016 - First usable version.
+This file is part of ultrav check_plugins project
+http://github.com/viniciusfs/check_plugins
 """
 
 import argparse
@@ -107,6 +90,8 @@ def main():
         exit(UNKNOWN)
 
     load_average = check_load()
+
+    # FIXME: update all keys in load_average dict when cpucount is true
 
     if cpucount:
         load = load_average['load1'] / multiprocessing.cpu_count()
