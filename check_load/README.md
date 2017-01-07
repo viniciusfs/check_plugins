@@ -31,3 +31,8 @@ than your thresholds.
 							thresholds.
 	-n, --no-alert        No alert, only check and print performance data.
 	--version             show program's version number and exit
+
+
+## FIXME
+
+- [ ] Update all keys in load_average dict when cpucount is true
